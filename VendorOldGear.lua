@@ -1,9 +1,9 @@
-local itemLevelCap = 100
-local toSellAtOnce = 12
-local showOutput = true
+local ITEM_LEVEL_CAP = 100
+local TO_SELL_AT_ONCE = 12
+local SHOW_OUTPUT = true
 
 -- TODO take the config stuff and let it be configured somehow; simple options panel?
--- TODO if there are greys to sell, do nothing
+-- TODO if there are greys to sell, do nothing so we don't pollute the buyback screen?
 -- TODO handle leveling? how to prevent it from doing the thing
 -- TODO don't sell stuff that's in an equipment set
 
@@ -27,10 +27,13 @@ local function IsOldGear(container, slot)
         itemTexture, sellPrice, classID, subclassID, bindType, expacID, setID, isCraftingReagent = GetItemInfo(itemID)
 
     if itemEquipLoc == "" then
-        return false
+        -- Attempts to pick out the old class tokens
+        if bindType ~= 1 or itemQuality ~= 4 or itemSubType ~= "Junk" then
+            return false
+        end
     end
 
-    return itemLevel < itemLevelCap
+    return itemLevel < ITEM_LEVEL_CAP
 end
 
 local function FindOldGear()
@@ -40,7 +43,7 @@ local function FindOldGear()
         for slot = 1, GetContainerNumSlots(container) do
             local oldLink = IsOldGear(container, slot)
 
-            if toSellAtOnce >= 0 and table.getn(oldGear) >= toSellAtOnce then
+            if TO_SELL_AT_ONCE >= 0 and table.getn(oldGear) >= TO_SELL_AT_ONCE then
                 break
             end
 
@@ -54,7 +57,7 @@ local function FindOldGear()
 end
 
 local function SellItem(container, slot)
-    if showOutput then
+    if SHOW_OUTPUT then
         local _, _, _, _, _, _, itemLink = GetContainerItemInfo(container, slot)
         print("Selling: " .. itemLink)
     end
