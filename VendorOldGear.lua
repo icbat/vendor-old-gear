@@ -30,7 +30,7 @@ local function IsOldGear(container, slot)
         return false
     end
 
-    if itemMinLevel >= UnitLevel("unit") then
+    if itemMinLevel < UnitLevel("unit") then
         return false
     end
 
@@ -73,8 +73,10 @@ local function SellItem(container, slot)
     SellCursorItem()
 end
 
-local function InsertKeystone()
+local function SellOldGear()
     local toSell = FindOldGear()
+    print("found gear?")
+    print(table.getn(toSell))
     for _, v in pairs(toSell) do
         SellItem(v[1], v[2])
     end
@@ -82,5 +84,5 @@ end
 
 -- invisible frame for updating/hooking events
 local f = CreateFrame("frame")
-f:SetScript("OnEvent", InsertKeystone)
+f:SetScript("OnEvent", SellOldGear)
 f:RegisterEvent("MERCHANT_SHOW")
