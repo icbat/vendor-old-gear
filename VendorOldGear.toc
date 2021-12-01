@@ -1,0 +1,8 @@
+## Interface: 90105
+## Title: VendorOldGear
+## Notes: Automatically sells old, soulbound gear.
+## Author: @icbat
+## Version: 1
+
+## This addon
+VendorOldGear.lua
