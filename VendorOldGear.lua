@@ -75,8 +75,6 @@ end
 
 local function SellOldGear()
     local toSell = FindOldGear()
-    print("found gear?")
-    print(table.getn(toSell))
     for _, v in pairs(toSell) do
         SellItem(v[1], v[2])
     end
