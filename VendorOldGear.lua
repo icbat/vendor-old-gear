@@ -5,7 +5,6 @@ local SHOW_OUTPUT = true
 -- TODO take the config stuff and let it be configured somehow; simple options panel?
 -- TODO if there are greys to sell, do nothing so we don't pollute the buyback screen?
 -- TODO handle leveling? how to prevent it from doing the thing
--- TODO don't sell stuff that's in an equipment set
 
 local function IsOldGear(container, slot)
     local _, _, locked, quality, readable, lootable, itemLink, isFiltered, noValue, itemID, isBound =
@@ -25,6 +24,12 @@ local function IsOldGear(container, slot)
 
     local itemName, itemLink, itemQuality, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc,
         itemTexture, sellPrice, classID, subclassID, bindType, expacID, setID, isCraftingReagent = GetItemInfo(itemID)
+
+    local isInSet, whichSet = GetContainerItemEquipmentSetInfo(container, slot)
+
+    if isInSet then
+        return false
+    end
 
     if itemEquipLoc == "" then
         -- Attempts to pick out the old class tokens
