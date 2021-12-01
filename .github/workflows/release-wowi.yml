@@ -2,11 +2,11 @@ name: Release new version of addon
 
 env:
   # Must match the name of your TOC file for WoW to load this addon at all
-  ADDON_NAME: KeyReporter
+  ADDON_NAME: VendorOldGear
   # The list of what you want to ship in your ZIP file, minus the TOC which is required
-  ADDON_BUNDLE_FILES: KeyReporter.lua Localization.lua LICENSE README.md
+  ADDON_BUNDLE_FILES: VendorOldGear.lua LICENSE README.md
   # The ID number for WoW Interface to be able to upload
-  WOWI_ID: 25711
+  WOWI_ID: 26187
 
 on:
   workflow_dispatch:
@@ -29,10 +29,10 @@ jobs:
 
     - name: Put everything into a folder
       run: cp -r ${{ env.ADDON_BUNDLE_FILES }} ${{ env.ADDON_NAME }}.toc ${{env.ADDON_NAME}}/
-  
+
     - name: Zip it good
       run: zip -9 -r ${{env.ADDON_NAME}}.zip  ${{env.ADDON_NAME}}/
-      
+
     - name: Parse WoW Addon Verions
       id: get_versions
       uses: icbat/parse-wow-addon-version@v1.0.1
@@ -49,9 +49,9 @@ jobs:
         release_name: Release ${{ steps.get_versions.outputs.addon_version }}
         draft: false
         prerelease: false
-        
+
     - name: Upload GH Release Asset
-      id: upload-release-asset 
+      id: upload-release-asset
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
