@@ -4,7 +4,6 @@ local SHOW_OUTPUT = true
 
 -- TODO take the config stuff and let it be configured somehow; simple options panel?
 -- TODO if there are greys to sell, do nothing so we don't pollute the buyback screen?
--- TODO handle leveling? how to prevent it from doing the thing
 
 local function IsOldGear(container, slot)
     local _, _, locked, quality, readable, lootable, itemLink, isFiltered, noValue, itemID, isBound =
@@ -28,6 +27,10 @@ local function IsOldGear(container, slot)
     local isInSet, whichSet = GetContainerItemEquipmentSetInfo(container, slot)
 
     if isInSet then
+        return false
+    end
+
+    if itemMinLevel >= UnitLevel("unit") then
         return false
     end
 
