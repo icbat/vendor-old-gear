@@ -2,7 +2,7 @@
 ## Title: VendorOldGear
 ## Notes: Automatically sells old, soulbound gear.
 ## Author: @icbat
-## Version: 5
+## Version: 6
 
 ## This addon
 VendorOldGear.lua

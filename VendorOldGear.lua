@@ -1,9 +1,13 @@
 local ITEM_LEVEL_CAP = 100
 local TO_SELL_AT_ONCE = 12
 local SHOW_OUTPUT = true
+local DRY_RUN = true
 
 -- TODO take the config stuff and let it be configured somehow; simple options panel?
 -- TODO if there are greys to sell, do nothing so we don't pollute the buyback screen?
+-- TODO sell trash (first!)
+-- TODO ignore out philosophers stones
+-- TODO leveling gear honks, needs a wider range to accept levels
 
 local function IsOldGear(container, slot)
     local _, _, locked, quality, readable, lootable, itemLink, isFiltered, noValue, itemID, isBound =
@@ -69,11 +73,18 @@ local function SellItem(container, slot)
         local _, _, _, _, _, _, itemLink = GetContainerItemInfo(container, slot)
         print("Selling: " .. itemLink)
     end
+    if DRY_RUN then
+        return
+    end
     PickupContainerItem(container, slot)
     SellCursorItem()
 end
 
 local function SellOldGear()
+    if DRY_RUN then
+        print("Dry Run! This addon is still in development, it won't sell anything yet!")
+    end
+
     local toSell = FindOldGear()
     for _, v in pairs(toSell) do
         SellItem(v[1], v[2])
