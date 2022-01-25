@@ -4,10 +4,23 @@ local SHOW_OUTPUT = true
 local DRY_RUN = true
 
 -- TODO take the config stuff and let it be configured somehow; simple options panel?
--- TODO if there are greys to sell, do nothing so we don't pollute the buyback screen?
--- TODO sell trash (first!)
 -- TODO ignore out philosophers stones
 -- TODO leveling gear honks, needs a wider range to accept levels
+
+local function IsTrash(container, slot)
+    local _, _, locked, quality, readable, lootable, itemLink, isFiltered, noValue, itemID, isBound =
+        GetContainerItemInfo(container, slot)
+
+    if not itemID then
+        return false
+    end
+
+    if noValue then
+        return false
+    end
+
+    return quality == 0
+end
 
 local function IsOldGear(container, slot)
     local _, _, locked, quality, readable, lootable, itemLink, isFiltered, noValue, itemID, isBound =
@@ -48,13 +61,25 @@ local function IsOldGear(container, slot)
     return itemLevel < ITEM_LEVEL_CAP
 end
 
+local function FindTrash()
+    local vendorTrash = {}
+
+    for container = BACKPACK_CONTAINER, NUM_BAG_SLOTS do
+        for slot = 1, GetContainerNumSlots(container) do
+            if IsTrash(container, slot) then
+                table.insert(vendorTrash, {container, slot})
+            end
+        end
+    end
+
+    return vendorTrash
+end
+
 local function FindOldGear()
     local oldGear = {}
 
     for container = BACKPACK_CONTAINER, NUM_BAG_SLOTS do
         for slot = 1, GetContainerNumSlots(container) do
-            local oldLink = IsOldGear(container, slot)
-
             if TO_SELL_AT_ONCE >= 0 and table.getn(oldGear) >= TO_SELL_AT_ONCE then
                 break
             end
@@ -68,12 +93,12 @@ local function FindOldGear()
     return oldGear
 end
 
-local function SellItem(container, slot)
+local function SellItem(container, slot, isDryRun)
     if SHOW_OUTPUT then
         local _, _, _, _, _, _, itemLink = GetContainerItemInfo(container, slot)
         print("Selling: " .. itemLink)
     end
-    if DRY_RUN then
+    if isDryRun then
         return
     end
     PickupContainerItem(container, slot)
@@ -84,10 +109,14 @@ local function SellOldGear()
     if DRY_RUN then
         print("Dry Run! This addon is still in development, it won't sell anything yet!")
     end
+    local vendorTrash = FindTrash()
+    for _, v in pairs(vendorTrash) do
+        SellItem(v[1], v[2], false)
+    end
 
     local toSell = FindOldGear()
     for _, v in pairs(toSell) do
-        SellItem(v[1], v[2])
+        SellItem(v[1], v[2], DRY_RUN)
     end
 end
 
