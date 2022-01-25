@@ -2,9 +2,10 @@ local ITEM_LEVEL_CAP = 100
 local TO_SELL_AT_ONCE = 12
 local SHOW_OUTPUT = true
 local DRY_RUN = true
+local BLACKLISTED_ITEM_IDS = {75274 -- Zen Alchemist Stone
+}
 
 -- TODO take the config stuff and let it be configured somehow; simple options panel?
--- TODO ignore out philosophers stones
 -- TODO leveling gear honks, needs a wider range to accept levels
 
 local function IsTrash(container, slot)
@@ -28,6 +29,12 @@ local function IsOldGear(container, slot)
 
     if not itemID then
         return false
+    end
+
+    for _, blacklisted_id in pairs(BLACKLISTED_ITEM_IDS) do
+        if itemID == blacklisted_id then
+            return false
+        end
     end
 
     if noValue then
@@ -58,7 +65,13 @@ local function IsOldGear(container, slot)
         end
     end
 
-    return itemLevel < ITEM_LEVEL_CAP
+    if itemLevel > ITEM_LEVEL_CAP then
+        return false
+    end
+
+    print(itemID)
+
+    return true
 end
 
 local function FindTrash()
