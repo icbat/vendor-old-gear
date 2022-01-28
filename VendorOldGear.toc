@@ -3,6 +3,12 @@
 ## Notes: Automatically sells old, soulbound gear.
 ## Author: @icbat
 ## Version: 6
+## SavedVariablesPerCharacter: icbat_vog_options
 
-## This addon
+# Dependencies
+embed.xml
+
+# This addon
+savedVariables.lua
 VendorOldGear.lua
+options.lua

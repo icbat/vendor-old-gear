@@ -1,13 +1,5 @@
-local ITEM_LEVEL_CAP = 100
-local TO_SELL_AT_ONCE = 12
-local SHOW_OUTPUT = true
-local DRY_RUN = true
-local BLACKLISTED_ITEM_IDS = {75274 -- Zen Alchemist Stone
-}
-
--- TODO take the config stuff and let it be configured somehow; simple options panel?
 -- TODO leveling gear honks, needs a wider range to accept levels
-
+-- TODO data broker display to preview what it would sell
 local function IsTrash(container, slot)
     local _, _, locked, quality, readable, lootable, itemLink, isFiltered, noValue, itemID, isBound =
         GetContainerItemInfo(container, slot)
@@ -23,6 +15,27 @@ local function IsTrash(container, slot)
     return quality == 0
 end
 
+local function IsWhitelisted(container, slot)
+    local _, _, locked, quality, readable, lootable, itemLink, isFiltered, noValue, itemID, isBound =
+        GetContainerItemInfo(container, slot)
+
+    if not itemID then
+        return false
+    end
+
+    if noValue then
+        return false
+    end
+
+    for i, whitelisted_id in ipairs(icbat_vog_options['item_ids_whitelist']) do
+        if itemID == whitelisted_id then
+            return true
+        end
+    end
+
+    return false
+end
+
 local function IsOldGear(container, slot)
     local _, _, locked, quality, readable, lootable, itemLink, isFiltered, noValue, itemID, isBound =
         GetContainerItemInfo(container, slot)
@@ -31,7 +44,7 @@ local function IsOldGear(container, slot)
         return false
     end
 
-    for _, blacklisted_id in pairs(BLACKLISTED_ITEM_IDS) do
+    for _, blacklisted_id in pairs(icbat_vog_options['item_ids_blacklist']) do
         if itemID == blacklisted_id then
             return false
         end
@@ -65,11 +78,9 @@ local function IsOldGear(container, slot)
         end
     end
 
-    if itemLevel > ITEM_LEVEL_CAP then
+    if itemLevel >= icbat_vog_options['item_level_cap'] then
         return false
     end
-
-    print(itemID)
 
     return true
 end
@@ -88,12 +99,26 @@ local function FindTrash()
     return vendorTrash
 end
 
+local function FindWhitelist()
+    local whitelist = {}
+
+    for container = BACKPACK_CONTAINER, NUM_BAG_SLOTS do
+        for slot = 1, GetContainerNumSlots(container) do
+            if IsWhitelisted(container, slot) then
+                table.insert(whitelist, {container, slot})
+            end
+        end
+    end
+
+    return whitelist
+end
+
 local function FindOldGear()
     local oldGear = {}
 
     for container = BACKPACK_CONTAINER, NUM_BAG_SLOTS do
         for slot = 1, GetContainerNumSlots(container) do
-            if TO_SELL_AT_ONCE >= 0 and table.getn(oldGear) >= TO_SELL_AT_ONCE then
+            if icbat_vog_options['to_sell_at_once'] >= 0 and table.getn(oldGear) >= icbat_vog_options['to_sell_at_once'] then
                 break
             end
 
@@ -107,7 +132,7 @@ local function FindOldGear()
 end
 
 local function SellItem(container, slot, isDryRun)
-    if SHOW_OUTPUT then
+    if icbat_vog_options['show_output'] then
         local _, _, _, _, _, _, itemLink = GetContainerItemInfo(container, slot)
         print("Selling: " .. itemLink)
     end
@@ -119,17 +144,23 @@ local function SellItem(container, slot, isDryRun)
 end
 
 local function SellOldGear()
-    if DRY_RUN then
-        print("Dry Run! This addon is still in development, it won't sell anything yet!")
+    if icbat_vog_options['dryrun'] then
+        print(
+            "Dry Run! Not selling auto-detected items. Turn this off in Interface options when you're confident this addon won't sell anything you need!")
     end
     local vendorTrash = FindTrash()
     for _, v in pairs(vendorTrash) do
         SellItem(v[1], v[2], false)
     end
 
+    local whitelisted = FindWhitelist()
+    for _, v in pairs(whitelisted) do
+        SellItem(v[1], v[2], false)
+    end
+
     local toSell = FindOldGear()
     for _, v in pairs(toSell) do
-        SellItem(v[1], v[2], DRY_RUN)
+        SellItem(v[1], v[2], icbat_vog_options['dryrun'])
     end
 end
 
