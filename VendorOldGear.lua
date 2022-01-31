@@ -72,6 +72,10 @@ local function IsOldGear(container, slot)
     end
 
     if itemEquipLoc == "" then
+        if itemSubType == "Artifact Relic" then
+            return true
+        end
+
         -- Attempts to pick out the old class tokens
         if bindType ~= 1 or itemQuality ~= 4 or itemSubType ~= "Junk" then
             return false
