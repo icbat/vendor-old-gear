@@ -107,13 +107,13 @@ local function build_options()
                 end
             },
             blacklist = {
-                order = 30,
+                order = 40,
                 name = "Never Sell",
                 type = "group",
                 args = build_list_options("blacklist", icbat_vog_options['item_ids_blacklist'])
             },
             whitelist = {
-                order = 40,
+                order = 30,
                 name = "Always Sell",
                 type = "group",
                 args = build_list_options("whitelist", icbat_vog_options['item_ids_whitelist'])
