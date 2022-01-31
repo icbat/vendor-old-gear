@@ -2,7 +2,7 @@
 ## Title: VendorOldGear
 ## Notes: Automatically sells old, soulbound gear.
 ## Author: @icbat
-## Version: 7
+## Version: 8
 ## SavedVariablesPerCharacter: icbat_vog_options
 
 # Dependencies
