@@ -71,6 +71,10 @@ local function IsOldGear(container, slot)
         return false
     end
 
+    if itemSubType == "Fishing Poles" then
+        return false
+    end
+
     if itemEquipLoc == "" then
         if itemSubType == "Artifact Relic" then
             return true
