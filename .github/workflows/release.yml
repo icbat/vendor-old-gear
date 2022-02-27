@@ -15,4 +15,5 @@ jobs:
       addon_name: VendorOldGear
       addon_bundle_files: VendorOldGear.lua LICENSE README.md libs/ embed.xml
       wowi_id: 26187
+    secrets:
       wowi_api_token: ${{secrets.WOWI_API_TOKEN}}
