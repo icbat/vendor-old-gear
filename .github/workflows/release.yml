@@ -13,7 +13,7 @@ jobs:
     uses: icbat/wow-addon-github-workflow/.github/workflows/release-wowi.yml@main
     with:
       addon_name: VendorOldGear
-      addon_bundled_files: VendorOldGear.lua LICENSE README.md libs/ embed.xml
+      addon_bundled_files: VendorOldGear.lua savedVariables.lua options.lua LICENSE README.md libs/ embed.xml
       wowi_id: 26187
     secrets:
       wowi_api_token: ${{secrets.WOWI_API_TOKEN}}

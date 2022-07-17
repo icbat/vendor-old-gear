@@ -140,6 +140,13 @@ local function FindOldGear()
 end
 
 local function SellItem(container, slot, isDryRun)
+    if UnitLevel("player") < GetMaxLevelForLatestExpansion() then
+        if icbat_vog_options['show_output'] then
+            local _, _, _, _, _, _, itemLink = GetContainerItemInfo(container, slot)
+            print("Will not automatically sell 'old gear' below level", GetMaxLevelForLatestExpansion(), itemLink)
+        end
+        return
+    end
     if icbat_vog_options['show_output'] then
         local _, _, _, _, _, _, itemLink = GetContainerItemInfo(container, slot)
         print("Selling: " .. itemLink)
