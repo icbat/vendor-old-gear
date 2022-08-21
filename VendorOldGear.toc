@@ -1,8 +1,8 @@
-## Interface: 90205
+## Interface: 90207
 ## Title: VendorOldGear
 ## Notes: Automatically sells old, soulbound gear.
 ## Author: @icbat
-## Version: 13
+## Version: 14
 ## SavedVariablesPerCharacter: icbat_vog_options
 
 # Dependencies
