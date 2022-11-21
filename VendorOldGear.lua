@@ -1,5 +1,13 @@
 -- TODO leveling gear honks, needs a wider range to accept levels
 -- TODO data broker display to preview what it would sell
+-- DevTools_Dump(itemInfo)
+
+local debug_logging_enabled = false
+local function debug_log(...)
+    if debug_logging_enabled == true then
+        print(...)
+    end
+end
 local function IsTrash(container, slot)
     local _, _, locked, quality, readable, lootable, itemLink, isFiltered, noValue, itemID, isBound =
         GetContainerItemInfo(container, slot)
@@ -28,7 +36,7 @@ local function IsWhitelisted(container, slot)
     end
 
     for i, whitelisted_id in ipairs(icbat_vog_options['item_ids_whitelist']) do
-        if itemID == whitelisted_id then
+            debug_log("Should sell, whitelisted", itemInfo["hyperlink"])
             return true
         end
     end
@@ -45,16 +53,16 @@ local function IsOldGear(container, slot)
     end
 
     for _, blacklisted_id in pairs(icbat_vog_options['item_ids_blacklist']) do
-        if itemID == blacklisted_id then
+            debug_log("Not selling, blacklisted not to sell", itemInfo["hyperlink"])
             return false
         end
     end
 
-    if noValue then
+        debug_log("Not selling, flagged as no value", itemInfo["hyperlink"])
         return false
     end
 
-    if not isBound then
+        debug_log("Not selling, not currently soulbound", itemInfo["hyperlink"])
         return false
     end
 
@@ -64,32 +72,38 @@ local function IsOldGear(container, slot)
     local isInSet, whichSet = GetContainerItemEquipmentSetInfo(container, slot)
 
     if isInSet then
+        debug_log("Not selling, this is in an equipment set", itemInfo["hyperlink"])
         return false
     end
 
-    if itemMinLevel < UnitLevel("unit") then
+        debug_log("??", itemInfo["hyperlink"]. itemMinLevel, UnitLevel("player"))
         return false
     end
 
     if itemSubType == "Fishing Poles" then
+        debug_log("Not selling this Fishing Pole", itemInfo["hyperlink"])
         return false
     end
 
     if itemEquipLoc == "" then
         if itemSubType == "Artifact Relic" then
+            debug_log("Should sell Legion artifact relics", itemInfo["hyperlink"])
             return true
         end
 
         -- Attempts to pick out the old class tokens
         if bindType ~= 1 or itemQuality ~= 4 or itemSubType ~= "Junk" then
+            debug_log("Not selling class tokens", itemInfo["hyperlink"])
             return false
         end
     end
 
     if itemLevel >= icbat_vog_options['item_level_cap'] then
+        debug_log("Not selling because it's lower than the defined item level in config", itemInfo["hyperlink"], icbat_vog_options['item_level_cap'])
         return false
     end
 
+    debug_log("Should sell", itemInfo["hyperlink"])
     return true
 end
 
