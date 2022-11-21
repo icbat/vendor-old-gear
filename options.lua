@@ -55,10 +55,10 @@ local function build_options()
                 desc = "Prints out the names of everything we're selling to the chat window",
                 type = "toggle",
                 set = function(info, val)
-                    icbat_vog_options['show_output'] = val
+                    icbat_vog_per_char_options['show_output'] = val
                 end,
                 get = function(info)
-                    return icbat_vog_options['show_output']
+                    return icbat_vog_per_char_options['show_output']
                 end
             },
             automatic_selling = {
@@ -72,10 +72,10 @@ local function build_options()
                 desc = "If enabled, this will NOT sell anything we detect via rules. Trash and any whitelisted items will still be sold.",
                 type = "toggle",
                 set = function(info, val)
-                    icbat_vog_options['dryrun'] = val
+                    icbat_vog_per_char_options['dryrun'] = val
                 end,
                 get = function(info)
-                    return icbat_vog_options['dryrun']
+                    return icbat_vog_per_char_options['dryrun']
                 end
             },
             to_sell_at_once = {
@@ -86,10 +86,10 @@ local function build_options()
                 min = 0,
                 max = 12,
                 set = function(info, val)
-                    icbat_vog_options['to_sell_at_once'] = val
+                    icbat_vog_per_char_options['to_sell_at_once'] = val
                 end,
                 get = function(info)
-                    return icbat_vog_options['to_sell_at_once']
+                    return icbat_vog_per_char_options['to_sell_at_once']
                 end
             },
             item_level_cap = {
@@ -100,10 +100,10 @@ local function build_options()
                 min = 0,
                 max = 999,
                 set = function(info, val)
-                    icbat_vog_options['item_level_cap'] = val
+                    icbat_vog_per_char_options['item_level_cap'] = val
                 end,
                 get = function(info)
-                    return icbat_vog_options['item_level_cap']
+                    return icbat_vog_per_char_options['item_level_cap']
                 end
             },
             blacklist = {

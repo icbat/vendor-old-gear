@@ -3,6 +3,8 @@
 ## Notes: Automatically sells old, soulbound gear.
 ## Author: @icbat
 ## Version: 15
+## SavedVariables: icbat_vog_options
+## SavedVariablesPerCharacter: icbat_vog_per_char_options
 
 # Dependencies
 embed.xml

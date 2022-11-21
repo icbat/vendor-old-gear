@@ -100,8 +100,8 @@ local function IsOldGear(container, slot)
         end
     end
 
-    if itemLevel >= icbat_vog_options['item_level_cap'] then
-        debug_log("Not selling because it's lower than the defined item level in config", itemInfo["hyperlink"], icbat_vog_options['item_level_cap'])
+    if itemLevel >= icbat_vog_per_char_options['item_level_cap'] then
+        debug_log("Not selling because it's lower than the defined item level in config", itemInfo["hyperlink"], icbat_vog_per_char_options['item_level_cap'])
         return false
     end
 
@@ -142,7 +142,7 @@ local function FindOldGear()
 
     for container = BACKPACK_CONTAINER, NUM_BAG_SLOTS do
         for slot = 1, C_Container.GetContainerNumSlots(container) do
-            if icbat_vog_options['to_sell_at_once'] >= 0 and table.getn(oldGear) >= icbat_vog_options['to_sell_at_once'] then
+            if icbat_vog_per_char_options['to_sell_at_once'] >= 0 and table.getn(oldGear) >= icbat_vog_per_char_options['to_sell_at_once'] then
                 break
             end
 
@@ -157,13 +157,13 @@ end
 
 local function SellItem(container, slot, isDryRun)
     if UnitLevel("player") < GetMaxLevelForLatestExpansion() then
-        if icbat_vog_options['show_output'] then
+        if icbat_vog_per_char_options['show_output'] then
             local itemInfo = C_Container.GetContainerItemInfo(container, slot)
             print("Will not automatically sell 'old gear' below level", GetMaxLevelForLatestExpansion(), itemInfo["hyperlink"])
         end
         return
     end
-    if icbat_vog_options['show_output'] then
+    if icbat_vog_per_char_options['show_output'] then
         local itemInfo = C_Container.GetContainerItemInfo(container, slot)
         print("Selling: ", itemInfo["hyperlink"])
     end
@@ -175,7 +175,7 @@ local function SellItem(container, slot, isDryRun)
 end
 
 local function SellOldGear()
-    if icbat_vog_options['dryrun'] then
+    if icbat_vog_per_char_options['dryrun'] then
         print(
             "Dry Run! Not selling auto-detected items. Turn this off in Interface options when you're confident this addon won't sell anything you need!")
     end
@@ -191,7 +191,7 @@ local function SellOldGear()
 
     local toSell = FindOldGear()
     for _, v in pairs(toSell) do
-        SellItem(v[1], v[2], icbat_vog_options['dryrun'])
+        SellItem(v[1], v[2], icbat_vog_per_char_options['dryrun'])
     end
 end
 
