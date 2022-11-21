@@ -8,34 +8,34 @@ local function debug_log(...)
         print(...)
     end
 end
+
 local function IsTrash(container, slot)
-    local _, _, locked, quality, readable, lootable, itemLink, isFiltered, noValue, itemID, isBound =
-        GetContainerItemInfo(container, slot)
+    local itemInfo = C_Container.GetContainerItemInfo(container, slot)
 
-    if not itemID then
+    if itemInfo == nil then
         return false
     end
 
-    if noValue then
+    if itemInfo["hasNoValue"] then
         return false
     end
 
-    return quality == 0
+    return itemInfo["quality"] == 0
 end
 
 local function IsWhitelisted(container, slot)
-    local _, _, locked, quality, readable, lootable, itemLink, isFiltered, noValue, itemID, isBound =
-        GetContainerItemInfo(container, slot)
+    local itemInfo = C_Container.GetContainerItemInfo(container, slot)
 
-    if not itemID then
+    if itemInfo == nil then
         return false
     end
 
-    if noValue then
+    if itemInfo["hasNoValue"] then
         return false
     end
 
     for i, whitelisted_id in ipairs(icbat_vog_options['item_ids_whitelist']) do
+        if itemInfo["itemID"] == whitelisted_id then
             debug_log("Should sell, whitelisted", itemInfo["hyperlink"])
             return true
         end
@@ -45,37 +45,40 @@ local function IsWhitelisted(container, slot)
 end
 
 local function IsOldGear(container, slot)
-    local _, _, locked, quality, readable, lootable, itemLink, isFiltered, noValue, itemID, isBound =
-        GetContainerItemInfo(container, slot)
+    local itemInfo = C_Container.GetContainerItemInfo(container, slot)
 
-    if not itemID then
+    if itemInfo == nil then
         return false
     end
 
     for _, blacklisted_id in pairs(icbat_vog_options['item_ids_blacklist']) do
+        if itemInfo["itemID"] == blacklisted_id then
             debug_log("Not selling, blacklisted not to sell", itemInfo["hyperlink"])
             return false
         end
     end
 
+    if itemInfo["hasNoValue"] then
         debug_log("Not selling, flagged as no value", itemInfo["hyperlink"])
         return false
     end
 
+    if not itemInfo["isBound"] then
         debug_log("Not selling, not currently soulbound", itemInfo["hyperlink"])
         return false
     end
 
     local itemName, itemLink, itemQuality, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc,
-        itemTexture, sellPrice, classID, subclassID, bindType, expacID, setID, isCraftingReagent = GetItemInfo(itemID)
+        itemTexture, sellPrice, classID, subclassID, bindType, expacID, setID, isCraftingReagent = GetItemInfo(itemInfo["itemID"])
 
-    local isInSet, whichSet = GetContainerItemEquipmentSetInfo(container, slot)
+    local isInSet, whichSet = C_Container.GetContainerItemEquipmentSetInfo(container, slot)
 
     if isInSet then
         debug_log("Not selling, this is in an equipment set", itemInfo["hyperlink"])
         return false
     end
 
+    if itemMinLevel < UnitLevel("player") then
         debug_log("??", itemInfo["hyperlink"]. itemMinLevel, UnitLevel("player"))
         return false
     end
@@ -111,7 +114,7 @@ local function FindTrash()
     local vendorTrash = {}
 
     for container = BACKPACK_CONTAINER, NUM_BAG_SLOTS do
-        for slot = 1, GetContainerNumSlots(container) do
+        for slot = 1, C_Container.GetContainerNumSlots(container) do
             if IsTrash(container, slot) then
                 table.insert(vendorTrash, {container, slot})
             end
@@ -125,7 +128,7 @@ local function FindWhitelist()
     local whitelist = {}
 
     for container = BACKPACK_CONTAINER, NUM_BAG_SLOTS do
-        for slot = 1, GetContainerNumSlots(container) do
+        for slot = 1, C_Container.GetContainerNumSlots(container) do
             if IsWhitelisted(container, slot) then
                 table.insert(whitelist, {container, slot})
             end
@@ -139,7 +142,7 @@ local function FindOldGear()
     local oldGear = {}
 
     for container = BACKPACK_CONTAINER, NUM_BAG_SLOTS do
-        for slot = 1, GetContainerNumSlots(container) do
+        for slot = 1, C_Container.GetContainerNumSlots(container) do
             if icbat_vog_options['to_sell_at_once'] >= 0 and table.getn(oldGear) >= icbat_vog_options['to_sell_at_once'] then
                 break
             end
@@ -156,19 +159,19 @@ end
 local function SellItem(container, slot, isDryRun)
     if UnitLevel("player") < GetMaxLevelForLatestExpansion() then
         if icbat_vog_options['show_output'] then
-            local _, _, _, _, _, _, itemLink = GetContainerItemInfo(container, slot)
-            print("Will not automatically sell 'old gear' below level", GetMaxLevelForLatestExpansion(), itemLink)
+            local itemInfo = C_Container.GetContainerItemInfo(container, slot)
+            print("Will not automatically sell 'old gear' below level", GetMaxLevelForLatestExpansion(), itemInfo["hyperlink"])
         end
         return
     end
     if icbat_vog_options['show_output'] then
-        local _, _, _, _, _, _, itemLink = GetContainerItemInfo(container, slot)
-        print("Selling: " .. itemLink)
+        local itemInfo = C_Container.GetContainerItemInfo(container, slot)
+        print("Selling: ", itemInfo["hyperlink"])
     end
     if isDryRun then
         return
     end
-    PickupContainerItem(container, slot)
+    C_Container.PickupContainerItem(container, slot)
     SellCursorItem()
 end
 

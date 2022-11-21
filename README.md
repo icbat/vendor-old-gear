@@ -1,9 +1,9 @@
-Key Reporter
-====================
+Vendor Old Gear
+===============
 
-An addon for responding to !keys with what you've got this week. It also auto-inserts your keystone if it can.
+An addon that sells your old, soulbound gear.
 
-Get it on [WoW Interface](https://www.wowinterface.com/downloads/info25711-KeyReporter), or use the [Cursebreaker tool](https://github.com/AcidWeb/CurseBreaker) (recommended)
+Get it on [WoW Interface](https://www.wowinterface.com/downloads/info26187-VendorOldGear.html), or use the [Cursebreaker tool](https://github.com/AcidWeb/CurseBreaker) (recommended)
 
 ## Contributing
 
