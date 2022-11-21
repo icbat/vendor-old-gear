@@ -1,4 +1,3 @@
--- TODO leveling gear honks, needs a wider range to accept levels
 -- TODO data broker display to preview what it would sell
 -- DevTools_Dump(itemInfo)
 
@@ -78,8 +77,8 @@ local function IsOldGear(container, slot)
         return false
     end
 
-    if itemMinLevel < UnitLevel("player") then
-        debug_log("??", itemInfo["hyperlink"]. itemMinLevel, UnitLevel("player"))
+    if itemMinLevel and itemMinLevel == UnitLevel("player") then
+        debug_log("Not selling, this is for your current level", itemInfo["hyperlink"], itemMinLevel, UnitLevel("player"))
         return false
     end
 
