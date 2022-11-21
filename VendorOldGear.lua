@@ -1,4 +1,5 @@
 -- TODO data broker display to preview what it would sell
+-- TODO whitelist/blacklist cannot be populated anymore, options won't let bags open. work around this...
 -- DevTools_Dump(itemInfo)
 
 local debug_logging_enabled = false
